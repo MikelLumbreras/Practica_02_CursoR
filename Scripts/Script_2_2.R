@@ -28,6 +28,7 @@ DatosEdificio <- DatosEdificio[-which(is.na(DatosEdificio$Wind.direction) == T),
 
 summary(DatosEdificio)
 
+
 ### VAMOS A ANALIZAR LA CORRELACION ENTRE VARIABLES
 ## PARA ELLO, VAMOS A INSTALAR Y CARGAR UNA LIBRERIA DE R LLAMADA ggpubr
 ## LO PODEMOS HACER DE VARIAS MANERAS: EN CODIGO:
