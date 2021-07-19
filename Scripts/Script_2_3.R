@@ -40,6 +40,13 @@ RegresionLinealMultivariable <- function(FrameTraining)
   return(CoeficientesMV)
 }
 
-TesteandoRegresiones <- function(FrameTesting , )
+TesteandoRegresiones <- function(FrameTesting , Coef_UV , Coef_MV)
+{
+  return(list(Regresion_1 , Regresion_2))
+}
 
+MetricasError <- function()
+{
+  return(list(Rsquared, RootmeanSE))
+}
 
