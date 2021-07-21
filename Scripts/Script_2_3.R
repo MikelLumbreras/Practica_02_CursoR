@@ -37,7 +37,7 @@ TrainingTesting <- function(FrameEdificio)
   FrameTraining <- FrameEdificio[train_indexes, ]
   FrameTesting <- FrameEdificio[-train_indexes, ]
   ### DEFINIMOS CUALES SON NUESTROS 
-  return(FrameTraining , FrameTesting)
+  return(list(FrameTraining , FrameTesting))
 }
 
 RegresionLinealUnivariable <- function(FrameTraining)
@@ -69,7 +69,7 @@ TesteandoCoeficientes <- function(FrameTesting , Coef_UV , Coef_MV)
   for (i in 1:length(FrameTesting[,1])) ## RECORREMOS TODO EL FRAME DE TESTING
   {
     Regresion_1[i] <- Coef_UV$A + FrameTesting$Temperature[i]*Coef_UV$B 
-    Regresion_2[i] <- CoeficientesMV$A + FrameTesting$Temperature[i]*Coef_MV$B + FrameTesting$Irradiation.flux[i]*Coef_MV$C + 
+    Regresion_2[i] <- Coef_MV$A + FrameTesting$Temperature[i]*Coef_MV$B + FrameTesting$Irradiation.flux[i]*Coef_MV$C + 
       FrameTesting$Wind.speed[i]*Coef_MV$D + FrameTesting$Wind.direction[i]*Coef_MV$E
   }
   ### PARA DEVOLVER MAS DE UNA VARIABLE HAY QUE PONER LIST
@@ -131,6 +131,14 @@ Coef_MultiVariable <- RegresionLinealMultivariable(TrainingFrame)
 
 Regresion_UniqueVariable <- TesteandoCoeficientes(TestingFrame , Coef_UniqueVariable , Coef_MultiVariable)[[1]]
 Regresion_MultiVariable <- TesteandoCoeficientes(TestingFrame , Coef_UniqueVariable , Coef_MultiVariable)[[2]]
+
+#### GUARDAMOS EL TESING FRAME Y EL TRAINING FRAME CON LAS REGRESIONES
+setwd("C:/Users/mlumbreras001/OneDrive/Tecnalia/ProyectosR/Practica_02_CursoR/Results")
+write.csv(TrainingFrame, file = "TrainingFrame.csv")
+TestingFrame <- cbind.data.frame(TestingFrame , Regresion_UniqueVariable , Regresion_MultiVariable)
+colnames(TestingFrame)[c(22:23)] <- c("Regresion_UV" , "Regresion_MV")
+write.csv(TestingFrame, file = "TestingFrame.csv")
+
 
 FrameMetricasError <- data.frame(matrix(ncol = 2 , nrow = 2))
 colnames(FrameMetricasError) <- c("R2" , "RMSE")
