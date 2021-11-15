@@ -1,4 +1,4 @@
-#### SCRIP 2.1: REPASO PRACTICA 1
+#### SCRIPT 2.1: REPASO PRACTICA 1
 rm(list = ls())
 #### VAMOS A RECORDAR COMO CARGAR UN CSV DE UN DIRECTORIO EN CONCRETO
 
@@ -6,11 +6,11 @@ rm(list = ls())
 getwd()
 
 ## PARA CAMBIAR EL DIRECTORIO A UNO EN CONCRETO <-- CAMBIAR CADA 1
-Directorio <- "C:/Users/mlumbreras001/OneDrive/Tecnalia/ProyectosR/Practica_02_CursoR/Data/"
+Directorio <- "C:/Users/MikelLumbreras/OneDrive - Managing Innovation Strategies (MainStrat)/EHU/Sesion_2/Practica_02_CursoR-master/Data"
 setwd(Directorio)
 ## LEEMOS EL ARCHIVO
 DatosEdificioHora <- read.csv("BuildingData.csv" , header = T , sep = ",")
-##♣ QUITAR LA PRIMERA COLUMNA
+## QUITAR LA PRIMERA COLUMNA
 DatosEdificioHora <- DatosEdificioHora[,-1] ### LA POSICION DE LA COLUMNA QUE QUE QUEREMOS QUITAR
 
 ### PASAMOS DE DATOS HORARIOS A DATOS DIARIOS
@@ -44,7 +44,7 @@ DeHorarioaDiario <- function(DatosEdificioHora)
 ### LLAMAMOS A LA FUNCION CREADA PARA CAMBIAR EL FORMATO DE HORARIO A DIARIO
 DatosDiarios <- DeHorarioaDiario(DatosEdificioHora)
 
-### GUARDAMOS EL ARCHIVO DIARIO (Mismo Directorio)
+### GUARDAMOS EL ARCHIVO DIARIO (Mismo-Directorio)
 write.csv(DatosDiarios , file = "BuildingDataDay.csv")
 
 

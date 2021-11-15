@@ -5,7 +5,7 @@ rm(list = ls())
 ### VAMOS A CARGAR EL ARCHIVO GENERADO CON LOS DATOS DIARIOS
 ## PARA ELLO CREAMOS UNA FUNCION: INPUT: DIRECTORIO, OUTPUT: DATOS
 getwd()
-Direc <- "C:/Users/mlumbreras001/OneDrive/Tecnalia/ProyectosR/Practica_02_CursoR/Data/"
+Direc <- "C:/Users/MikelLumbreras/OneDrive - Managing Innovation Strategies (MainStrat)/EHU/Sesion_2/Practica_02_CursoR-master/Data/"
 LecturaDatos <- function(DirectorioDatos)
 {
   setwd(DirectorioDatos)
@@ -41,6 +41,12 @@ library("ggpubr")
 ## Estas funciones tienen implementadas las ecuaciones de pearson, spearman entre otros
 
 ## 1. CORRELATION TEST
+#The result of rquery.cormat function is a list containing the following components :
+#r : The table of correlation coefficients
+#p : Table of p-values corresponding to the significance levels of the correlations
+#sym : A representation of the correlation matrix in which coefficients are replaced by symbols according to the strength of the dependence. For more description, see this article: Visualize correlation matrix using symnum function
+#In the generated graph, negative correlations are in blue and positive ones in red color.
+
 ## PEARSON
 ### EJEMPLO PARA CONSEGUIR COEF. DE PEARSON ENTRE DEMANDA Y TEMPERATURA EXTERIOR
 cor(DatosEdificio$Temperature , DatosEdificio$Power.kW., method = c("pearson"))
@@ -54,7 +60,7 @@ cor.test(DatosEdificio$Temperature , DatosEdificio$Power.kW., method = c("spearm
 dev.new()
 ggscatter(DatosEdificio, x = "Temperature", y = "Power.kW.", 
         add = "reg.line", conf.int = TRUE, 
-        cor.coef = TRUE, cor.method = "pearson",
+        cor.coef = TRUE, cor.method = "pearson",fill = "lightgray",
         xlab = "OUTDOOR TEMPERATURE", ylab = "DEMAND")
 
 ## DE ESTA FORMA PODRIAMOS ANALIZAR UNA A UNA LA CORRELACION ENTRE VARIABLES
@@ -69,12 +75,7 @@ FrameCorrelation <- cbind.data.frame(DatosEdificio$Power.kW. , DatosEdificio$Tem
 
 install.packages("corrplot")
 library("corrplot")
-#The result of rquery.cormat function is a list containing the following components :
-#r : The table of correlation coefficients
-#p : Table of p-values corresponding to the significance levels of the correlations
-#sym : A representation of the correlation matrix in which coefficients are replaced by symbols according to the strength of the dependence. For more description, see this article: Visualize correlation matrix using symnum function
-#In the generated graph, negative correlations are in blue and positive ones in red color.
-
+source("http://www.sthda.com/upload/rquery_cormat.r")
 {
   dev.new()
   a <- rquery.cormat(FrameCorrelation)
