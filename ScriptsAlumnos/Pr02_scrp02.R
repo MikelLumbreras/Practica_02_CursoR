@@ -15,14 +15,14 @@ rm(list = ls())
 ### VAMOS A CARGAR EL ARCHIVO GENERADO CON LOS DATOS DIARIOS
 ## PARA ELLO CREAMOS UNA FUNCION: INPUT: DIRECTORIO, OUTPUT: DATOS
 getwd()
-Direc <- 
+Direc <- "C:/Users/MikelLumbreras/OneDrive - Managing Innovation Strategies (MainStrat)/EHU/Sesion_2/Practica_02_CursoR-master/Data/"
 LecturaDatos <- function(DirectorioDatos)
 {
   setwd(DirectorioDatos)
   BuildingData <- read.csv(paste(DirectorioDatos , "BuildingDataDay.csv" , sep = "") , header = T , sep = ",")
   BuildingData <- BuildingData[,-1]
   ### QUE FALTA AQUÍ?
-  
+  return(BuildingData)
 }
 
 DatosEdificio <- LecturaDatos(Direc)
@@ -37,7 +37,9 @@ is.na(DatosEdificio$Wind.direction)
 ## PASO 2: EJECUTAR
 which(is.na(DatosEdificio$Wind.direction) == T)
 ## PASO 3: ESCRBIR EL CODIGO QUE NOS QUITE LOS NAs
-DatosEdificio <- ###
+DatosEdificio <- DatosEdificio[-which(is.na(DatosEdificio$Wind.direction) == T),]
+
+###
 
 ### COMPROBAMOS QUE YA NO HAY NAs
 summary(DatosEdificio)
@@ -46,7 +48,7 @@ summary(DatosEdificio)
 ### VAMOS A ANALIZAR LA CORRELACION ENTRE VARIABLES
 ## PARA ELLO, VAMOS A INSTALAR Y CARGAR UNA LIBRERIA DE R LLAMADA ggpubr
 ## LO PODEMOS HACER DE VARIAS MANERAS: EN CODIGO:
-install.packages("ggpubr")
+#install.packages("ggpubr")
 library("ggpubr")
 
 ## EXISTEN OTRAS MANERAS DE CARGAR Y BUSCAR LIBRERIAS <- ver
@@ -74,7 +76,8 @@ cor(DatosEdificio$Temperature , DatosEdificio$Power.kW., method = c("pearson"))
 cor.test(DatosEdificio$Temperature , DatosEdificio$Power.kW., method = c("pearson"))
 ## SPEARMAN <-- HACER LOS MISMO QUE CON EL COEFICIENTE DE PEARSON PERO CON SPEARMAN
 ## UTILIZAR LA AYUDA DE R DE EXPLICACION DE LAS FUNCIONES
-
+cor(DatosEdificio$Temperature , DatosEdificio$Power.kW., method = c("spearman"))
+cor.test(DatosEdificio$Temperature , DatosEdificio$Power.kW., method = c("spearman"))
 
 ### PLOTEAMOS ESTE EJEMPLO DE CORRELACION
 ### PARA GENERAR UN NUEVO DIBUJO dev.new()
@@ -87,7 +90,20 @@ ggscatter(DatosEdificio, x = "Temperature", y = "Power.kW.",
 ## DE ESTA FORMA PODRIAMOS ANALIZAR UNA A UNA LA CORRELACION ENTRE VARIABLES
 ## HACER LO MISMO PERO AHORA CON LA RADIACION SOLAR
 {
+  cor(DatosEdificio$Irradiation.flux , DatosEdificio$Power.kW., method = c("pearson"))
+  cor.test(DatosEdificio$Irradiation.flux , DatosEdificio$Power.kW., method = c("pearson"))
+  ## SPEARMAN <-- HACER LOS MISMO QUE CON EL COEFICIENTE DE PEARSON PERO CON SPEARMAN
+  ## UTILIZAR LA AYUDA DE R DE EXPLICACION DE LAS FUNCIONES
+  cor(DatosEdificio$Irradiation.flux , DatosEdificio$Power.kW., method = c("spearman"))
+  cor.test(DatosEdificio$Irradiation.flux , DatosEdificio$Power.kW., method = c("spearman"))
   
+  ### PLOTEAMOS ESTE EJEMPLO DE CORRELACION
+  ### PARA GENERAR UN NUEVO DIBUJO dev.new()
+  dev.new()
+  ggscatter(DatosEdificio, x = "Irradiation.flux", y = "Power.kW.", 
+            add = "reg.line", conf.int = TRUE, 
+            cor.coef = TRUE, cor.method = "pearson",
+            xlab = "W/m2", ylab = "DEMAND")
   
 }
 
@@ -101,13 +117,14 @@ FrameCorrelation <- cbind.data.frame(DatosEdificio$Power.kW. , DatosEdificio$Tem
 
 install.packages("corrplot")
 library("corrplot")
-
+source("http://www.sthda.com/upload/rquery_cormat.r")
 {
   dev.new()
   a <- rquery.cormat(FrameCorrelation)
 }
-SpearmanCoef <- a[[1]]
-PearsonCoef <- a[[2]]
+
+PearsonCoef <- a[[1]]
+
 
 ### FIN DEL SCRIPT 2
 ## VOLVEMOS A LIMPIAR EL ENVIRONMENT

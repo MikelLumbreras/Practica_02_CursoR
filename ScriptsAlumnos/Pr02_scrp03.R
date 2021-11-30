@@ -23,12 +23,17 @@ rm(list=ls())
 ## PASO 4: CALCULAR METRICAS DE ERROR
 
 ### CADA UNO PONER LA SUYA
-Direc <- ""
+Direc <-  "C:/Users/MikelLumbreras/OneDrive - Managing Innovation Strategies (MainStrat)/EHU/Sesion_2/Practica_02_CursoR-master/Data/"
 
 #### FUNCION PARA LEER DATOS DIARIOS
 LecturaDatos <- function(DirectorioDatos)
 {
  ### ESCRIBIR AHORA VOSOTROS EL CODIGO PARA LEER Y DEVOLVER EL FRAME CREADO EN EL PRIMER SCRIPT
+  setwd(DirectorioDatos)
+  BuildingData <- read.csv(paste(DirectorioDatos , "BuildingDataDay.csv" , sep = "") , header = T , sep = ",")
+  BuildingData <- BuildingData[,-1]
+  ### QUE FALTA AQUÍ?
+  return(BuildingData)
 }
 
 ### AL IGUAL QUE ANTES VAMOS A QUITAR LOS DATOS DEFECTUOSOS
@@ -65,6 +70,11 @@ RegresionLinealMultivariable <- function(FrameTraining)
 {
   ## Q = A + BxT + CxGt + DxWs + ExWd
   ### UTILIZAR LA FUNCIOON DE LA REGRESIOON UNIVARIABLE COMO BASE
+  CoeficientesMV <- data.frame(matrix(ncol = 5 , nrow = 1))
+  colnames(CoeficientesMV) <- c("A" , "B", "C", "D", "E")
+  CoeficientesMV[1,] <- lm(FrameTraining$Power.kW. ~ FrameTraining$Temperature + FrameTraining$Irradiation.flux +
+                             FrameTraining$Wind.speed + FrameTraining$Wind.direction                           , 
+                           data = FrameTraining)[[1]]
   return(CoeficientesMV)
 }
 
@@ -99,7 +109,7 @@ MetricasError <- function(Regresion , FrameTesting)
   RSquaredValue <- 1-(SSE/SSYY)
   ### RMSE
   ## PODEMOS USAR LIBRERÍAS YA PREDEFINIDAS
-  RMSE <- rmse(CargaReal, Regresion)
+  RMSE <- rmse(FrameTesting$Power.kW., Regresion)
   return(list(RSquaredValue, RMSE))
 }
 
@@ -132,19 +142,21 @@ PloteandoRegresiones <- function(RegresionUV, RegresionMV , FrameTesting)
 
 #### AHORA USANDO LAS FUNCIONES QUE HEMOS CREADO VAMOS A IR CREANDO EL SCRIPT PRINCIPAL
 ### PASO 1 <-- DIVIDIMOS TRAINING Y TESTING
-TrainingFrame <- 
-TestingFrame <- 
+TrainingFrame <- TrainingTesting(FrameEdificio)[[1]]
+TestingFrame <- TrainingTesting(FrameEdificio)[[2]]
 
 ### PASO 2 <-- CALCULAMOS LOS COEFICIENTES DE REGRESION
-Coef_UniqueVariable <- 
-Coef_MultiVariable <- 
+Coef_UniqueVariable <- RegresionLinealUnivariable(TrainingFrame)
+Coef_MultiVariable <- RegresionLinealMultivariable(TrainingFrame)
 
 ### PASO 3 <-- HACEMOS LA REGRESION
-Regresion_UniqueVariable <- 
-Regresion_MultiVariable <- 
+Regresion_UniqueVariable <- TesteandoCoeficientes(TestingFrame,Coef_UniqueVariable,
+                                                  Coef_MultiVariable)[[1]]
+Regresion_MultiVariable <- TesteandoCoeficientes(TestingFrame,Coef_UniqueVariable,
+                                                Coef_MultiVariable)[[2]] 
 
 #### GUARDAMOS EL TESING FRAME Y EL TRAINING FRAME CON LAS REGRESIONES
-setwd("C:/Users/mlumbreras001/OneDrive/Tecnalia/ProyectosR/Practica_02_CursoR/Results")
+setwd("C:/Users/MikelLumbreras/OneDrive - Managing Innovation Strategies (MainStrat)/EHU/Sesion_2/Practica_02_CursoR-master/Results")
 write.csv(TrainingFrame, file = "TrainingFrame.csv")
 TestingFrame <- cbind.data.frame(TestingFrame , Regresion_UniqueVariable , Regresion_MultiVariable)
 colnames(TestingFrame)[c(22:23)] <- c("Regresion_UV" , "Regresion_MV")
@@ -157,8 +169,7 @@ rownames(FrameMetricasError) <- c("UV" , "MV")
 #### RELLENAR EL FRAME Y LO DIBUJAREMOS
 
 ### DIBUJAMOS Y LO GUARDAMOS AUTOMATICAMENTE <-- USAMOS LA FUNCION DEFINIDA PREVIAMNET
-PloteandoRegresiones()
-setwd("")
+PloteandoRegresiones(Regresion_UniqueVariable , Regresion_MultiVariable ,FrameTesting)
 ggsave(filename = "Regresiones.png" , plot = last_plot() , width = 7, height = 7 , units = "in")
 dev.off()
 
